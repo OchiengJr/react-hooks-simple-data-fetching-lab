@@ -1,6 +1,5 @@
 import React from "react";
-import "whatwg-fetch";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import { server } from "../mocks/server";
 
@@ -10,23 +9,41 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-test("displays the dog image after fetching", async () => {
-  render(<App />);
-  const img = await screen.findByAltText("A Random Dog");
-  expect(img).toBeInTheDocument();
-  expect(img.src).toBe(
-    "https://images.dog.ceo/breeds/bulldog-english/mami.jpg"
-  );
-});
+describe("App Component", () => {
+  test("renders loading message initially", () => {
+    render(<App />);
+    expect(screen.getByText(/Loading/)).toBeInTheDocument();
+  });
 
-test("displays a loading message before fetching", async () => {
-  render(<App />);
-  expect(screen.queryByText(/Loading/)).toBeInTheDocument();
+  test("displays the dog image after successful fetch", async () => {
+    render(<App />);
+    const loadingMessage = screen.getByText(/Loading/);
+    expect(loadingMessage).toBeInTheDocument();
 
-  const img = await screen.findByAltText("A Random Dog");
-  expect(img.src).toBe(
-    "https://images.dog.ceo/breeds/bulldog-english/mami.jpg"
-  );
+    await waitFor(() => {
+      const img = screen.getByAltText("A Random Dog");
+      expect(img).toBeInTheDocument();
+      expect(img.src).toBe("https://images.dog.ceo/breeds/bulldog-english/mami.jpg");
+      expect(loadingMessage).not.toBeInTheDocument();
+    });
+  });
 
-  expect(screen.queryByText(/Loading/)).not.toBeInTheDocument();
+  test("displays error message if fetch fails", async () => {
+    // Mock a server error response
+    server.use(
+      rest.get("https://dog.ceo/api/breeds/image/random", (req, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    );
+
+    render(<App />);
+    const loadingMessage = screen.getByText(/Loading/);
+    expect(loadingMessage).toBeInTheDocument();
+
+    await waitFor(() => {
+      const errorMessage = screen.getByText(/Error fetching data/);
+      expect(errorMessage).toBeInTheDocument();
+      expect(loadingMessage).not.toBeInTheDocument();
+    });
+  });
 });

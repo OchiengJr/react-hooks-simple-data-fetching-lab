@@ -1,6 +1,7 @@
 {
   "short_name": "React App",
   "name": "Create React App Sample",
+  "description": "A sample React app created with Create React App",
   "icons": [
     {
       "src": "favicon.ico",
@@ -17,6 +18,7 @@
       "type": "image/png",
       "sizes": "512x512"
     }
+    // Add more icon sizes if needed
   ],
   "start_url": ".",
   "display": "standalone",

@@ -9,11 +9,11 @@ on:
 jobs:
   sync:
     name: Sync with Canvas
-
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

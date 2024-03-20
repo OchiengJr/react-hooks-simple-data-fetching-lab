@@ -1,9 +1,11 @@
+/* Resetting default margins and paddings */
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: sans-serif; /* Using a generic sans-serif font */
 }
 
+/* Ensuring images don't exceed their container */
 img {
-  max-width: 100%;
+  max-width: 100%; /* Limiting image width to the container's width */
 }
